@@ -8,6 +8,7 @@ class Store {
       lastCode: initState.list ? initState.list.length : 0,
     };
     this.listeners = []; // Слушатели изменений состояния
+    this.existingCodes = initState.list ? initState.list.map(item => item.code) : [];
   }
 
   /**
@@ -45,7 +46,7 @@ class Store {
    * Добавление новой записи
    */
   addItem() {
-    const newCode = this.state.lastCode + 1;
+    const newCode = this.generateUniqueCode();
     this.setState({
       ...this.state,
       lastCode: newCode,
@@ -54,6 +55,7 @@ class Store {
         { code: newCode, title: "Новая запись", selectionCount: 0 },
       ],
     });
+    this.existingCodes.push(newCode);
   };
 
   /**
@@ -87,6 +89,30 @@ class Store {
       }),
     });
   }
+   /**
+   * Выделение записи по коду
+   * @param code
+   */
+   pluralizeTimes(count) {
+    if (count === 1) {
+      return 'раз';
+    } else if (count >= 2 && count <= 4) {
+      return 'раза';
+    } else {
+      return 'раз';
+    }
+  }
+    /**
+   * Генерация уникального кода
+   * @returns {number}
+   */
+    generateUniqueCode() {
+      let newCode = this.state.lastCode + 1;
+      while (this.existingCodes.includes(newCode)) {
+        newCode++;
+      }
+      return newCode;
+    }
 }
 
 export default Store;
